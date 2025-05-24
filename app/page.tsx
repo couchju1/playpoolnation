@@ -13,7 +13,7 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section className="text-center">
           <h1 className="text-4xl font-bold mb-2">Find Bars with Pool Tables Near You</h1>
-          <p className="text-lg text-gray-600 mb-6">Explore nightlife, compare amenities, and rack 'em up at the best local bars.</p>
+          <p className="text-lg text-gray-600 mb-6">Explore nightlife, compare amenities, and rack %apos;em up at the best local bars.</p>
           <SearchBarComponent />
         </section>
 
