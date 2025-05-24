@@ -1,8 +1,9 @@
-import Header from '../.next/components/Header';
-import Footer from '../.next/components/Footer';
-import SearchBarComponent from '../.next/components/SearchBarComponent';
-import FeaturedBarsCarousel from '../.next/components/FeaturedBarsCarousel';
-import MapComponent from '../.next/components/MapComponent';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SearchBarComponent from '../components/SearchBarComponent';
+import FeaturedBarsCarousel from '../components/FeaturedBarsCarousel';
+import MapComponent from '../components/MapComponent';
+
 
 export default function HomePage() {
   return (
