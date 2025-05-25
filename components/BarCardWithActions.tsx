@@ -1,5 +1,3 @@
-// ✅ components/BarCardWithActions.tsx
-
 'use client';
 
 import Image from 'next/image';
@@ -31,7 +29,7 @@ export default function BarCardWithActions({ bar }: { bar: Bar }) {
 
     if (res.ok) {
       alert('Bar deleted successfully.');
-      router.refresh();
+      router.refresh(); // Refresh the list after deletion
     } else {
       alert('Failed to delete bar.');
     }
@@ -66,3 +64,4 @@ export default function BarCardWithActions({ bar }: { bar: Bar }) {
     </div>
   );
 }
+
