@@ -11,13 +11,13 @@ let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === 'development') {
-  // @ts-ignore
+  // @ts-expect-error: global._mongoClientPromise is not typed
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);
-    // @ts-ignore
+    // @ts-expect-error: assigning to undeclared global prop
     global._mongoClientPromise = client.connect();
   }
-  // @ts-ignore
+  // @ts-expect-error: reading undeclared global prop
   clientPromise = global._mongoClientPromise;
 } else {
   client = new MongoClient(uri, options);
@@ -25,6 +25,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default clientPromise;
+
 
 
 
