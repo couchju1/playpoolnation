@@ -3,10 +3,12 @@ import { MongoClient } from 'mongodb';
 const uri = process.env.MONGODB_URI;
 const options = {};
 
-// ✅ Extend NodeJS.Global to recognize the custom global variable
 declare global {
-  // eslint-disable-next-line no-var
-  var _mongoClientPromise: Promise<MongoClient> | undefined;
+  namespace NodeJS {
+    interface Global {
+      _mongoClientPromise?: Promise<MongoClient>;
+    }
+  }
 }
 
 let clientPromise: Promise<MongoClient>;
@@ -27,6 +29,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default clientPromise;
+
+
 
 
 
