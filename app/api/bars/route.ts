@@ -1,59 +1,79 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import { ObjectId } from 'mongodb';
 import clientPromise from '@/lib/mongodb';
 
-// 🔍 Zod schema for validation
-const BarSchema = z.object({
-  name: z.string().min(2),
-  address: z.string().min(5),
-  description: z.string().optional(),
-  tables: z.number().min(1).max(50),
-  amenities: z.array(z.string()).optional(),
-  imageUrl: z.string().url().optional(),
-});
-
-export async function GET() {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const client = await clientPromise;
     const db = client.db('playpoolnation');
-    const bars = await db.collection('bars').find({}).toArray();
+    const bar = await db
+      .collection('bars')
+      .findOne({ _id: new ObjectId(params.id) });
 
-    const cleaned = bars.map((bar: any) => ({
-      ...bar,
-      _id: bar._id.toString(),
-    }));
-
-    return NextResponse.json(cleaned);
-  } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch bars' }, { status: 500 });
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    const data = await req.json();
-
-    // ✅ Validate incoming data
-    const parsed = BarSchema.parse(data);
-
-    const client = await clientPromise;
-    const db = client.db('playpoolnation');
-    const result = await db.collection('bars').insertOne(parsed);
-
-    return NextResponse.json({
-      message: 'Bar submitted successfully',
-      id: result.insertedId,
-    });
-  } catch (err: any) {
-    if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: err.errors }, { status: 400 });
+    if (!bar) {
+      return NextResponse.json({ error: 'Bar not found' }, { status: 404 });
     }
 
-    console.error('POST error:', err);
-    return NextResponse.json({ error: 'Failed to submit bar' }, { status: 500 });
+    return NextResponse.json({ ...bar, _id: bar._id.toString() });
+  } catch (error: unknown) {
+    console.error('GET bar by ID error:', error);
+    return NextResponse.json({ error: 'Failed to fetch bar' }, { status: 500 });
   }
 }
+
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const data = await req.json();
+    const client = await clientPromise;
+    const db = client.db('playpoolnation');
+
+    const result = await db
+      .collection('bars')
+      .updateOne(
+        { _id: new ObjectId(params.id) },
+        { $set: data }
+      );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json({ error: 'Bar not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Bar updated' });
+  } catch (error: unknown) {
+    console.error('PUT bar error:', error);
+    return NextResponse.json({ error: 'Failed to update bar' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const client = await clientPromise;
+    const db = client.db('playpoolnation');
+
+    const result = await db
+      .collection('bars')
+      .deleteOne({ _id: new ObjectId(params.id) });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: 'Bar not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Bar deleted' });
+  } catch (error: unknown) {
+    console.error('DELETE bar error:', error);
+    return NextResponse.json({ error: 'Failed to delete bar' }, { status: 500 });
+  }
+}
+
 
 
 
